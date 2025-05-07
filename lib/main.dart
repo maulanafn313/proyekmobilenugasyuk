@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'schedule_provider.dart';
 import 'signin.dart';
 import 'auth_service.dart';
 import 'dashboardpage.dart';
@@ -13,8 +15,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final loggedIn = await AuthService.isLoggedIn();
   runApp(
-    MainApp(
-      startAtDashboard: loggedIn,
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (context) => ScheduleProvider())],
+      child: MainApp(startAtDashboard: loggedIn),
     ),
   );
 }

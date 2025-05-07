@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailSchedulePage extends StatelessWidget {
   final String title;
@@ -10,7 +13,6 @@ class DetailSchedulePage extends StatelessWidget {
   final String category;
   final String priority;
   final String url;
-  final List<Map<String, String>> projectTeam;
 
   const DetailSchedulePage({
     super.key,
@@ -23,7 +25,6 @@ class DetailSchedulePage extends StatelessWidget {
     required this.category,
     required this.priority,
     required this.url,
-    required this.projectTeam,
   });
 
   @override
@@ -74,10 +75,7 @@ class DetailSchedulePage extends StatelessWidget {
               ),
               child: Text(
                 description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF0A2472),
-                ),
+                style: const TextStyle(fontSize: 14, color: Color(0xFF0A2472)),
               ),
             ),
             const SizedBox(height: 24),
@@ -86,7 +84,19 @@ class DetailSchedulePage extends StatelessWidget {
             _DetailRow(label: 'Start Date', value: startDate),
             _DetailRow(label: 'Reminder', value: reminder),
             _DetailRow(label: 'Due Date', value: dueDate),
-            _DetailRow(label: 'Status', value: status),
+            _DetailRow(
+              label: 'Status',
+              value: status,
+              valueStyle: TextStyle(
+                fontSize: 14,
+                color:
+                    status == 'Done'
+                        ? Colors.green
+                        : status == 'In Progress'
+                        ? Colors.orange
+                        : Colors.red,
+              ),
+            ),
             _DetailRow(label: 'Category', value: category),
             _DetailRow(label: 'Priority', value: priority),
             const SizedBox(height: 24),
@@ -102,8 +112,15 @@ class DetailSchedulePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             GestureDetector(
-              onTap: () {
-                // Add URL navigation functionality here
+              onTap: () async {
+                final uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not open URL')),
+                  );
+                }
               },
               child: Text(
                 url,
@@ -115,37 +132,6 @@ class DetailSchedulePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Project Team Section
-            const Text(
-              'Project Team',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF0A2472),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: projectTeam
-                  .map((member) => Chip(
-                        label: Text(
-                          member['name']!,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        avatar: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            member['avatar']!,
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                        backgroundColor: const Color(0xFF0A2472),
-                      ))
-                  .toList(),
-            ),
-            const SizedBox(height: 32),
 
             // Done Task Button
             Center(
@@ -161,14 +147,17 @@ class DetailSchedulePage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // Add "Done Task" functionality here
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Task marked as done!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );  
+                Navigator.pop(context); // Close the detail page
                 },
                 child: const Text(
                   'Done Task',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             ),
@@ -182,8 +171,9 @@ class DetailSchedulePage extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
+  final TextStyle? valueStyle;
 
-  const _DetailRow({required this.label, required this.value});
+  const _DetailRow({required this.label, required this.value, this.valueStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -202,10 +192,9 @@ class _DetailRow extends StatelessWidget {
           ),
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF0A2472),
-            ),
+            style:
+                valueStyle ??
+                const TextStyle(fontSize: 14, color: Color(0xFF0A2472)),
           ),
         ],
       ),

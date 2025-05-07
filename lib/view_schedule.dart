@@ -1,27 +1,18 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'schedule_provider.dart';
 import 'create_schedule.dart';
 import 'detail_schedule.dart';
 
-class ViewSchedulePage extends StatefulWidget {
+class ViewSchedulePage extends StatelessWidget {
   const ViewSchedulePage({super.key});
 
   @override
-  _ViewSchedulePageState createState() => _ViewSchedulePageState();
-}
-
-class _ViewSchedulePageState extends State<ViewSchedulePage> {
-  final List<Map<String, dynamic>> _schedules = [];
-
-  void _addSchedule(Map<String, dynamic> schedule) {
-    setState(() {
-      _schedules.add(schedule);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final scheduleProvider = Provider.of<ScheduleProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -37,42 +28,68 @@ class _ViewSchedulePageState extends State<ViewSchedulePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: ListView.builder(
-          itemCount: _schedules.length,
-          itemBuilder: (context, index) {
-            final schedule = _schedules[index];
-            return _ScheduleCard(
-              title: schedule['title'],
-              deadline: schedule['dueDate'],
-              onDetailsPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => DetailSchedulePage(
-                          title: schedule['title'],
-                          description: schedule['description'],
-                          startDate: schedule['startDate'],
-                          dueDate: schedule['dueDate'],
-                          reminder: schedule['reminder'],
-                          status: schedule['status'],
-                          category: schedule['category'],
-                          priority: schedule['priority'],
-                          url: schedule['url'],
-                          projectTeam: schedule['projectTeam'],
-                        ),
+        child:
+            scheduleProvider.schedules.isEmpty
+                ? const Center(
+                  child: Text(
+                    'No schedules available',
+                    style: TextStyle(fontSize: 16, color: Color(0xFF0A2472)),
                   ),
-                );
-              },
-              onEditPressed: () {},
-              onDeletePressed: () {
-                setState(() {
-                  _schedules.removeAt(index);
-                });
-              },
-            );
-          },
-        ),
+                )
+                : ListView.builder(
+                  itemCount: scheduleProvider.schedules.length,
+                  itemBuilder: (context, index) {
+                    final schedule = scheduleProvider.schedules[index];
+                    return _ScheduleCard(
+                      title: schedule['title'],
+                      deadline: schedule['dueDate'],
+                      onDetailsPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DetailSchedulePage(
+                                  title: schedule['title'],
+                                  description: schedule['description'],
+                                  startDate: schedule['startDate'],
+                                  dueDate: schedule['dueDate'],
+                                  reminder: schedule['reminder'],
+                                  status: schedule['status'],
+                                  category: schedule['category'],
+                                  priority: schedule['priority'],
+                                  url: schedule['url'],
+                                ),
+                          ),
+                        );
+                      },
+                      onEditPressed: () {
+                        // Add edit functionality here
+                      },
+                      onDeletePressed: () {
+                        showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Delete Schedule'),
+                          content: const Text('Are you sure you want to delete this schedule?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                scheduleProvider.removeSchedule(index);
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      },
+                    );
+                  },
+                ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -81,7 +98,7 @@ class _ViewSchedulePageState extends State<ViewSchedulePage> {
             MaterialPageRoute(builder: (context) => const CreateSchedulePage()),
           );
           if (newSchedule != null) {
-            _addSchedule(newSchedule);
+            scheduleProvider.addSchedule(newSchedule);
           }
         },
         child: const Icon(Icons.add),

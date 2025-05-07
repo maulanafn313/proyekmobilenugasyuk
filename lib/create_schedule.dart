@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 
 class CreateSchedulePage extends StatefulWidget {
@@ -27,7 +29,7 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
     descriptionController.text = "Description Schedule";
   }
 
-  Future<void> pickDateTime(BuildContext context, bool isStart) async {
+  Future<void> pickDateTime(BuildContext context, String type) async {
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -36,7 +38,6 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
     );
     if (date == null) return;
     final time = await showTimePicker(
-      // ignore: use_build_context_synchronously
       context: context,
       initialTime: TimeOfDay.now(),
     );
@@ -49,10 +50,12 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
       time.minute,
     );
     setState(() {
-      if (isStart) {
+      if (type == 'start') {
         startDate = dateTime;
-      } else {
+      } else if (type == 'end') {
         endDate = dateTime;
+      } else if (type == 'reminder') {
+        reminderDate = dateTime;
       }
     });
   }
@@ -137,7 +140,7 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
               context,
               startDate,
               '01/05/2025 14:30',
-              () => pickDateTime(context, true),
+              () => pickDateTime(context, 'start'),
             ),
             SizedBox(height: 12),
             Text(
@@ -149,7 +152,7 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
               context,
               endDate,
               '01/05/2025 - 23:59',
-              () => pickDateTime(context, false),
+              () => pickDateTime(context, 'end'),
             ),
             SizedBox(height: 12),
             Text(
@@ -161,7 +164,7 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
               context,
               reminderDate,
               '01/05/2025 - 22:59',
-              () => pickDateTime(context, false),
+              () => pickDateTime(context, 'reminder'),
             ),
             SizedBox(height: 28),
             Text(
@@ -189,49 +192,6 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
               null,
               maxLines: 3,
             ),
-            SizedBox(height: 28),
-            Text(
-              'Collaborators',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-                color: Color(0xFF23238E),
-              ),
-            ),
-            SizedBox(height: 16),
-            Text('Name', style: TextStyle(fontWeight: FontWeight.w600)),
-            SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDropdown(
-                    value: null,
-                    hint: 'Taylor Smith',
-                    items: ['Taylor Smith', 'Alex Johnson'],
-                    onChanged: (val) {},
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Role',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(height: 4),
-                      _buildDropdown(
-                        value: null,
-                        hint: 'Select Role',
-                        items: ['Viewer', 'Editor'],
-                        onChanged: (val) {},
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
             SizedBox(height: 32),
             Center(
               child: ElevatedButton(
@@ -254,10 +214,6 @@ class _CreateSchedulePageState extends State<CreateSchedulePage> {
                       'category': taskType ?? 'Task',
                       'priority': importance ?? 'Normal',
                       'url': urlController.text,
-                      'projectTeam': [
-                        {'name': 'Kevin', 'avatar': '👨'},
-                        {'name': 'Radit', 'avatar': '🧑'},
-                      ],
                     };
                     Navigator.pop(context, newSchedule);
                   }

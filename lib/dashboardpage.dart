@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'signin.dart';
+import 'schedule_provider.dart';
 import 'create_schedule.dart';
 import 'view_schedule.dart';
 
@@ -13,6 +15,8 @@ class DashboardPage extends StatelessWidget {
   /// This page displays the user's daily quote, status cards, and a create
   /// schedule card.
   Widget build(BuildContext context) {
+    final scheduleProvider = Provider.of<ScheduleProvider>(context);
+
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
@@ -34,8 +38,8 @@ class DashboardPage extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Container(
               decoration: BoxDecoration(
-          color: Color(0xFFB3E0FB),
-          shape: BoxShape.circle,
+                color: Color(0xFFB3E0FB),
+                shape: BoxShape.circle,
               ),
               padding: EdgeInsets.all(8),
               child: Icon(Icons.add, color: Color(0xFF0A4D8C)),
@@ -48,43 +52,48 @@ class DashboardPage extends StatelessWidget {
             label: 'Notification',
           ),
         ],
-        onTap: (index) {
+        onTap: (index) async {
           switch (index) {
             case 0:
               // Navigate to Home Page
               Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => DashboardPage()),
+                context,
+                MaterialPageRoute(builder: (context) => DashboardPage()),
               );
               break;
             case 1:
               // Navigate to Calendar Page
-          //     Navigator.push(
-          // context,
-          // MaterialPageRoute(builder: (context) => CalendarPage()),
-          //     );
+              //     Navigator.push(
+              // context,
+              // MaterialPageRoute(builder: (context) => CalendarPage()),
+              //     );
               break;
             case 2:
               // Navigate to Add Schedule Page
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CreateSchedulePage()),
+              final newSchedule = await Navigator.push<Map<String, dynamic>>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateSchedulePage(),
+                ),
               );
+              if (newSchedule != null) {
+                scheduleProvider.addSchedule(newSchedule);
+              }
               break;
             case 3:
               // Navigate to History Page
-          //     Navigator.push(
-          // context,
-          // MaterialPageRoute(builder: (context) => HistoryPage()),
-          //     );
+              //     Navigator.push(
+              // context,
+              // MaterialPageRoute(builder: (context) => HistoryPage()),
+              //     );
               break;
             case 4:
-              // Navigate to Notification Page
-          //     Navigator.push(
-          // context,
-          // MaterialPageRoute(builder: (context) => NotificationPage()),
-          //     );
-          //     break;
+            // Navigate to Notification Page
+            //     Navigator.push(
+            // context,
+            // MaterialPageRoute(builder: (context) => NotificationPage()),
+            //     );
+            //     break;
           }
         },
       ),
@@ -227,13 +236,17 @@ class DashboardPage extends StatelessWidget {
                     "Hi! I know it can be tough to stay organized. Let's make a schedule together!",
                 buttonText: "Create Schedule",
                 imageAsset: 'images/notelist.png',
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  // Navigate to Add Schedule Page
+                  final newSchedule = await Navigator.push<Map<String, dynamic>>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => CreateSchedulePage(),
+                      builder: (context) => const CreateSchedulePage(),
                     ),
                   );
+                  if (newSchedule != null) {
+                    scheduleProvider.addSchedule(newSchedule);
+                  }
                 },
               ),
               SizedBox(height: 20),
@@ -245,7 +258,9 @@ class DashboardPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ViewSchedulePage()),
+                    MaterialPageRoute(
+                      builder: (context) => const ViewSchedulePage(),
+                    ),
                   );
                 },
               ),
