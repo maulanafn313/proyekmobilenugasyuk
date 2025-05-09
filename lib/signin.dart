@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'signup.dart';
-import 'googlesignin.dart';
-import 'forgot_password.dart';
-import 'dashboardpage.dart';
+import 'user/googlesignin.dart';
+import 'user/forgot_password.dart';
+import 'user/dashboardpage.dart';
 import 'auth_service.dart';
+import 'admin/dashboard_admin.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -145,6 +146,14 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     );
                     return;
+                  }
+
+                  // cek jika akun adalah admin
+                  if (email == 'mlnnrhsn@gmail.com' && password == 'nugasyuksukses') {
+                      Navigator.pushReplacement(context, 
+                      MaterialPageRoute(builder: (context) => const AdminDashboardPage()) 
+                      );
+                      return;
                   }
 
                   final success = await AuthService.signIn(email, password);

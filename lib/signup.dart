@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'googlesignin.dart';
+import 'user/googlesignin.dart';
 import 'signin.dart';
 import 'auth_service.dart';
 

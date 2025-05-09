@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'signin.dart';
+import '../signin.dart';
 
 class GoogleSignInPage extends StatelessWidget {
   const GoogleSignInPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'auth_service.dart';
-import 'signin.dart';
+import '../auth_service.dart';
+import '../signin.dart';
 import 'schedule_provider.dart';
 import 'create_schedule.dart';
 import 'view_schedule.dart';
