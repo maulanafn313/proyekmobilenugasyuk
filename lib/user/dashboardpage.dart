@@ -5,6 +5,8 @@ import '../signin.dart';
 import 'schedule_provider.dart';
 import 'create_schedule.dart';
 import 'view_schedule.dart';
+import 'notifications.dart';
+import 'calendar.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -62,11 +64,11 @@ class DashboardPage extends StatelessWidget {
               );
               break;
             case 1:
-              // Navigate to Calendar Page
-              //     Navigator.push(
-              // context,
-              // MaterialPageRoute(builder: (context) => CalendarPage()),
-              //     );
+              //Navigate to Calendar Page
+                  Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CalendarPage()),
+                  );
               break;
             case 2:
               // Navigate to Add Schedule Page
@@ -89,11 +91,11 @@ class DashboardPage extends StatelessWidget {
               break;
             case 4:
             // Navigate to Notification Page
-            //     Navigator.push(
-            // context,
-            // MaterialPageRoute(builder: (context) => NotificationPage()),
-            //     );
-            //     break;
+                Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NotificationPage()),
+                );
+                break;
           }
         },
       ),
