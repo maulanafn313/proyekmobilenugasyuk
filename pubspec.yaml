@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   provider: ^6.1.5
   shared_preferences: ^2.2.2
+  table_calendar: ^3.2.0
   url_launcher: ^6.3.1
 
 dev_dependencies:
@@ -33,6 +34,10 @@ flutter:
     - images/notelist.png 
     - images/presentation.png
     - images/avatar.png
+    - images/boy.png
+    - images/girl1.png
+    - images/girl2.png
+    - images/girl3.png
     - images/todo.svg
     - images/progress.svg
     - images/done.svg
