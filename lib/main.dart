@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'user/schedule_provider.dart';
 import 'admin/dashboard_admin.dart';
+import 'user/dashboardpage.dart'; // jika perlu
+import 'signin.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+        // Tambahkan provider lain jika ada
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,7 +44,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const AdminDashboardPage(),
+      home: const SignInPage(),
       debugShowCheckedModeBanner: false,
     );
   }
