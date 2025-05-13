@@ -8,108 +8,42 @@ class UserDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building detail page for user: ${user.name}');
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detail Pengguna'),
-        backgroundColor: Colors.blue,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            print('Back button pressed');
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: const Text('Detail Pengguna')),
+      body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.blue,
-                          child: Icon(
-                            Icons.person,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user.name,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                user.email,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      'Informasi Pengguna',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildInfoRow('Nama', user.name),
-                    _buildInfoRow('Email', user.email),
-                    _buildInfoRow('Alamat', user.address),
-                    _buildInfoRow('Kota', user.city),
-                    _buildInfoRow('Provinsi', user.province),
-                  ],
-                ),
+            // Foto profil
+            const Center(
+              child: CircleAvatar(
+                radius: 50,
+                child: Icon(Icons.person, size: 50),
               ),
             ),
+            const SizedBox(height: 24),
+            // Informasi pengguna
+            _buildInfoItem('Nama', user.name),
+            _buildInfoItem('Email', user.email),
+            _buildInfoItem('Alamat', user.address),
+            _buildInfoItem('Kota', user.city),
+            _buildInfoItem('Provinsi', user.province),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoItem(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
+          Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+          const SizedBox(height: 4),
+          Text(value, style: const TextStyle(fontSize: 16)),
         ],
       ),
     );

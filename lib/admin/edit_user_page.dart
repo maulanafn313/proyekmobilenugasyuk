@@ -11,25 +11,24 @@ class EditUserPage extends StatefulWidget {
 }
 
 class _EditUserPageState extends State<EditUserPage> {
-  final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameController;
-  late TextEditingController _emailController;
-  late TextEditingController _addressController;
-  late TextEditingController _cityController;
-  late TextEditingController _provinceController;
+  // Controller untuk input
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _provinceController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.user?.name ?? '');
-    _emailController = TextEditingController(text: widget.user?.email ?? '');
-    _addressController = TextEditingController(
-      text: widget.user?.address ?? '',
-    );
-    _cityController = TextEditingController(text: widget.user?.city ?? '');
-    _provinceController = TextEditingController(
-      text: widget.user?.province ?? '',
-    );
+    // Isi form jika sedang edit
+    if (widget.user != null) {
+      _nameController.text = widget.user!.name;
+      _emailController.text = widget.user!.email;
+      _addressController.text = widget.user!.address;
+      _cityController.text = widget.user!.city;
+      _provinceController.text = widget.user!.province;
+    }
   }
 
   @override
@@ -42,124 +41,75 @@ class _EditUserPageState extends State<EditUserPage> {
     super.dispose();
   }
 
+  void _saveUser() {
+    // Buat user baru
+    final user = User(
+      id: widget.user?.id ?? DateTime.now().toString(),
+      name: _nameController.text,
+      email: _emailController.text,
+      address: _addressController.text,
+      city: _cityController.text,
+      province: _provinceController.text,
+    );
+
+    // Kembali ke halaman sebelumnya dengan data
+    Navigator.pop(context, user);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.user == null ? 'Tambah Pengguna' : 'Edit Pengguna'),
-        backgroundColor: Colors.blue,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Lengkap',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama lengkap harus diisi';
-                  }
-                  return null;
-                },
+        child: Column(
+          children: [
+            // Form input
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nama',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email harus diisi';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Email tidak valid';
-                  }
-                  return null;
-                },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Alamat Lengkap',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Alamat lengkap harus diisi';
-                  }
-                  return null;
-                },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _addressController,
+              decoration: const InputDecoration(
+                labelText: 'Alamat',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _cityController,
-                decoration: const InputDecoration(
-                  labelText: 'Kabupaten/Kota',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Kabupaten/Kota harus diisi';
-                  }
-                  return null;
-                },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _cityController,
+              decoration: const InputDecoration(
+                labelText: 'Kota',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _provinceController,
-                decoration: const InputDecoration(
-                  labelText: 'Provinsi',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Provinsi harus diisi';
-                  }
-                  return null;
-                },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _provinceController,
+              decoration: const InputDecoration(
+                labelText: 'Provinsi',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final user = User(
-                        id: widget.user?.id ?? DateTime.now().toString(),
-                        name: _nameController.text,
-                        email: _emailController.text,
-                        address: _addressController.text,
-                        city: _cityController.text,
-                        province: _provinceController.text,
-                      );
-                      Navigator.pop(context, user);
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: Text(
-                    widget.user == null
-                        ? 'Tambah Pengguna'
-                        : 'Simpan Perubahan',
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            // Tombol simpan
+            ElevatedButton(onPressed: _saveUser, child: const Text('Simpan')),
+          ],
         ),
       ),
     );
